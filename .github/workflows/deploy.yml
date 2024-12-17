@@ -74,7 +74,7 @@ jobs:
       - name: Create Lambda function
         if: steps.check_function.outputs.function_exists == 'false'
         run: |
-          ROLE_ARN="arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+          ROLE_ARN="arn:aws:iam::${{ secrets.AWS_ACC_ID }}:role/MyLambdaExecutionRole"
           aws lambda create-function --function-name howto-lambda \
             --runtime python3.8 --role $ROLE_ARN \
             --handler lambda_function.lambda_handler --zip-file fileb://lambda-function.zip \

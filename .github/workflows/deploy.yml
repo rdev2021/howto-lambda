@@ -80,6 +80,7 @@ jobs:
             --handler lambda_function.lambda_handler --zip-file fileb://lambda-function.zip \
             --timeout 15 --memory-size 128 --region ap-south-1
           echo "Lambda function created."
+          sleep 30
 
       - name: Deploy Lambda function
         run: |

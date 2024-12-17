@@ -60,6 +60,27 @@ jobs:
           cd deployment-package
           zip -r ../lambda-function.zip .
 
+      - name: Check if Lambda function exists
+        id: check_function
+        run: |
+          if aws lambda get-function --function-name howto-lambda --region ap-south-1; then
+            echo "Function exists."
+            echo "::set-output name=function_exists::true"
+          else
+            echo "Function does not exist."
+            echo "::set-output name=function_exists::false"
+          fi
+
+      - name: Create Lambda function
+        if: steps.check_function.outputs.function_exists == 'false'
+        run: |
+          ROLE_ARN="arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+          aws lambda create-function --function-name howto-lambda \
+            --runtime python3.8 --role $ROLE_ARN \
+            --handler lambda_function.lambda_handler --zip-file fileb://lambda-function.zip \
+            --timeout 15 --memory-size 128 --region ap-south-1
+          echo "Lambda function created."
+
       - name: Deploy Lambda function
         run: |
           aws lambda update-function-code \
